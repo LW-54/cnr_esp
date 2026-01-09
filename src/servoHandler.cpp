@@ -1,7 +1,14 @@
 #include "servoHandler.h"
 
-// --- Constructor ---
-ServoHandler::ServoHandler() {
+// --- Constructors ---
+
+// Primary constructor: Binds the 'sts' reference to the internal driver instance.
+ServoHandler::ServoHandler() : internal_driver(), sts(internal_driver) {
+    busMutex = NULL;
+}
+
+// Testing constructor: Binds the 'sts' reference to the provided mock driver.
+ServoHandler::ServoHandler(STSServoDriver& driver_for_testing) : internal_driver(), sts(driver_for_testing) {
     busMutex = NULL;
 }
 
@@ -10,6 +17,7 @@ bool ServoHandler::begin(HardwareSerial& serial, int dirPin, const ServoModelCon
     // Store the provided configuration
     this->config = config;
 
+    // Initialize the actual driver that the sts reference is bound to
     if (!sts.init(dirPin, &serial)) {
         return false;
     }
